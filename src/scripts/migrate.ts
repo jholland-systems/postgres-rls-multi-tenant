@@ -4,7 +4,7 @@
  * Runs database migrations using node-pg-migrate
  */
 
-import { run } from 'node-pg-migrate';
+import run from 'node-pg-migrate';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
 
@@ -19,7 +19,7 @@ async function runMigrations() {
       migrationsTable: 'pgmigrations',
       count: Infinity,
       verbose: true,
-      log: (msg) => logger.info(msg),
+      log: (msg: string) => logger.info(msg),
     });
 
     if (migrations.length === 0) {
@@ -28,7 +28,7 @@ async function runMigrations() {
       logger.info(
         {
           count: migrations.length,
-          migrations: migrations.map((m) => m.name),
+          migrations: migrations.map((m: { name: string }) => m.name),
         },
         'Migrations completed successfully'
       );

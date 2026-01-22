@@ -4,6 +4,10 @@ import { env } from './config/env.js';
 import { correlationIdMiddleware } from './middleware/correlation-id.js';
 import { tenantContextMiddleware } from './middleware/tenant-context.js';
 import { errorHandler } from './middleware/error-handler.js';
+import tenantsRouter from './routes/tenants.js';
+import projectsRouter from './routes/projects.js';
+import tasksRouter from './routes/tasks.js';
+import usersRouter from './routes/users.js';
 
 /**
  * Creates and configures the Express application
@@ -73,26 +77,16 @@ export function createApp(): Express {
   });
 
   // ============================================================================
-  // API ROUTES (To be implemented in Phase 4)
+  // API ROUTES
   // ============================================================================
 
-  // Tenant-scoped routes will use requireTenantContext middleware
-  // Example:
-  // app.get('/api/projects', requireTenantContext, asyncHandler(async (req, res) => {
-  //   const projects = await withTenantContext(req.tenantId!, async (tx) => {
-  //     return await tx.selectFrom('projects').selectAll().execute();
-  //   });
-  //   res.json(projects);
-  // }));
+  // System-level routes (no tenant context required)
+  app.use('/api/tenants', tenantsRouter);
 
-  // System-level routes (tenant management) use withSystemContext
-  // Example:
-  // app.post('/api/tenants', asyncHandler(async (req, res) => {
-  //   const tenant = await withSystemContext(async (db) => {
-  //     return await db.insertInto('tenants').values(req.body).execute();
-  //   });
-  //   res.json(tenant);
-  // }));
+  // Tenant-scoped routes (require tenant context)
+  app.use('/api/projects', projectsRouter);
+  app.use('/api/tasks', tasksRouter);
+  app.use('/api/users', usersRouter);
 
   // ============================================================================
   // ERROR HANDLERS (Must be last)
