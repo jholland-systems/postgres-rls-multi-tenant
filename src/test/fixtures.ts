@@ -10,12 +10,16 @@ import type {
   ProjectRow,
   TaskRow,
 } from '../database/schema.js';
+import { withTestTenantContext } from './test-helpers.js';
 
 /**
  * Test fixtures and factories
  *
  * Helper functions to create test data with sensible defaults.
  * Makes it easy to set up test scenarios without repeating boilerplate.
+ *
+ * Note: Functions that create RLS-protected data (users, projects, tasks)
+ * automatically set tenant context before inserting.
  */
 
 /**
@@ -39,6 +43,8 @@ export async function createTestTenant(
 
 /**
  * Create a test user with optional overrides
+ *
+ * Sets tenant context before inserting to satisfy RLS policies.
  */
 export async function createTestUser(
   db: Kysely<Database>,
@@ -49,40 +55,48 @@ export async function createTestUser(
     overrides?.email ||
     `test-${Date.now()}-${Math.random().toString(36).slice(2, 7)}@example.com`;
 
-  return await db
-    .insertInto('users')
-    .values({
-      tenant_id: tenantId,
-      email,
-      name: overrides?.name || 'Test User',
-      role: overrides?.role || 'member',
-    })
-    .returningAll()
-    .executeTakeFirstOrThrow();
+  return await withTestTenantContext(db, tenantId, async (tx) => {
+    return await tx
+      .insertInto('users')
+      .values({
+        tenant_id: tenantId,
+        email,
+        name: overrides?.name || 'Test User',
+        role: overrides?.role || 'member',
+      })
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  });
 }
 
 /**
  * Create a test project with optional overrides
+ *
+ * Sets tenant context before inserting to satisfy RLS policies.
  */
 export async function createTestProject(
   db: Kysely<Database>,
   tenantId: string,
   overrides?: Partial<Omit<Projects, 'id' | 'tenant_id' | 'created_at' | 'updated_at'>>
 ): Promise<ProjectRow> {
-  return await db
-    .insertInto('projects')
-    .values({
-      tenant_id: tenantId,
-      name: overrides?.name || 'Test Project',
-      description: overrides?.description || 'A test project',
-      status: overrides?.status || 'active',
-    })
-    .returningAll()
-    .executeTakeFirstOrThrow();
+  return await withTestTenantContext(db, tenantId, async (tx) => {
+    return await tx
+      .insertInto('projects')
+      .values({
+        tenant_id: tenantId,
+        name: overrides?.name || 'Test Project',
+        description: overrides?.description || 'A test project',
+        status: overrides?.status || 'active',
+      })
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  });
 }
 
 /**
  * Create a test task with optional overrides
+ *
+ * Sets tenant context before inserting to satisfy RLS policies.
  */
 export async function createTestTask(
   db: Kysely<Database>,
@@ -90,18 +104,20 @@ export async function createTestTask(
   projectId: string,
   overrides?: Partial<Omit<Tasks, 'id' | 'tenant_id' | 'project_id' | 'created_at' | 'updated_at'>>
 ): Promise<TaskRow> {
-  return await db
-    .insertInto('tasks')
-    .values({
-      tenant_id: tenantId,
-      project_id: projectId,
-      title: overrides?.title || 'Test Task',
-      description: overrides?.description || 'A test task',
-      status: overrides?.status || 'pending',
-      assigned_to: overrides?.assigned_to || null,
-    })
-    .returningAll()
-    .executeTakeFirstOrThrow();
+  return await withTestTenantContext(db, tenantId, async (tx) => {
+    return await tx
+      .insertInto('tasks')
+      .values({
+        tenant_id: tenantId,
+        project_id: projectId,
+        title: overrides?.title || 'Test Task',
+        description: overrides?.description || 'A test task',
+        status: overrides?.status || 'pending',
+        assigned_to: overrides?.assigned_to || null,
+      })
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  });
 }
 
 /**
