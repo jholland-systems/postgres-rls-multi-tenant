@@ -1,0 +1,66 @@
+{
+  "name": "multi-tenant-postgres-rls",
+  "version": "1.0.0",
+  "description": "Production-grade multi-tenant data isolation using PostgreSQL Row Level Security",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "migrate": "node --loader tsx src/scripts/migrate.ts",
+    "migrate:create": "node --loader tsx src/scripts/create-migration.ts",
+    "seed": "node --loader tsx src/scripts/seed.ts",
+    "reset-db": "node --loader tsx src/scripts/reset-db.ts",
+    "benchmark": "node --loader tsx src/scripts/benchmark.ts",
+    "verify-rls": "node --loader tsx src/scripts/verify-rls-config.ts",
+    "delete-tenant": "node --loader tsx src/scripts/delete-tenant.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "postgresql",
+    "rls",
+    "row-level-security",
+    "multi-tenant",
+    "typescript",
+    "kysely",
+    "database-security"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "kysely": "^0.27.3",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1",
+    "zod": "^3.22.4",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.4",
+    "@types/pg": "^8.10.9",
+    "@types/uuid": "^9.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "@vitest/coverage-v8": "^1.0.4",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "testcontainers": "^10.4.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4",
+    "node-pg-migrate": "^6.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
