@@ -10,7 +10,7 @@
  * ```
  */
 
-import type { ColumnType } from 'kysely';
+import type { ColumnType, Selectable } from 'kysely';
 
 /**
  * Represents a timestamp column in the database.
@@ -98,3 +98,13 @@ export interface Database {
   tasks: Tasks;
   admin_audit_log: AdminAuditLog;
 }
+
+/**
+ * Selectable types (for query results)
+ * These represent the actual row types returned from SELECT queries
+ */
+export type TenantRow = Selectable<Tenants>;
+export type UserRow = Selectable<Users>;
+export type ProjectRow = Selectable<Projects>;
+export type TaskRow = Selectable<Tasks>;
+export type AdminAuditLogRow = Selectable<AdminAuditLog>;
