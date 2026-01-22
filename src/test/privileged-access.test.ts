@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { Kysely } from 'kysely';
 import type { Database } from '../database/schema.js';
 import { startTestDatabase, stopTestDatabase, cleanTestData } from './db-container.js';
-import { createTestTenant, createTestUser, createTestProject } from './fixtures.js';
+import { createTestTenant, createTestProject } from './fixtures.js';
 import { withTestTenantContext, withTestPrivilegedContext } from './test-helpers.js';
 
 /**
@@ -159,8 +159,9 @@ describe('Privileged Access - Cross-Tenant Queries', () => {
     const tenantA = await createTestTenant(db, { name: 'Tenant A' });
     const tenantB = await createTestTenant(db, { name: 'Tenant B' });
 
-    const projectA = await createTestProject(db, tenantA.id, { name: 'Project A' });
-    const projectB = await createTestProject(db, tenantB.id, { name: 'Project B' });
+    // Create projects (not using references directly, just checking count)
+    await createTestProject(db, tenantA.id, { name: 'Project A' });
+    await createTestProject(db, tenantB.id, { name: 'Project B' });
 
     // Privileged context should see all projects (no tenant context set)
     // Note: Privileged access only works on projects table, not users/tasks
