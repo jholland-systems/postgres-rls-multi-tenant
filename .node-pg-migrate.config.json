@@ -1,0 +1,10 @@
+{
+  "migrations-dir": "src/database/migrations",
+  "migration-file-language": "sql",
+  "migrations-table": "pgmigrations",
+  "direction": "up",
+  "count": null,
+  "check-order": true,
+  "verbose": true,
+  "decamelize": false
+}
